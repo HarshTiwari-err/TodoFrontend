@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { toaststyle } from "./ContainToast";
+import ContainToast from "./ContainToast";
+import { getLocal } from "./local";
 const Landing = () => {
   const [username, setUserName] = useState(null);
   // fetching user todos
@@ -25,12 +27,7 @@ const Landing = () => {
   const [taskAdded, setTaskAdded] = useState(false);
   const [taskDeleted, setTaskDeleted] = useState(false);
   const loadTodos = async () => {
-    const response = await axios.get(
-      "https://backendtodoservice.onrender.com/todo/gettodos",
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      }
-    );
+    const response = await axios.get(`/todo/gettodos`, getLocal);
     const { todos, username } = await response.data;
     // const todoarray =
     // const username = await response.data.username
@@ -49,95 +46,30 @@ const Landing = () => {
         title: todo,
         createdAt: Date.now(),
       };
-      const res = await axios.post(
-        "https://backendtodoservice.onrender.com/todo/createtodo",
-        data,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const res = await axios.post(`/todo/createtodo`, data, getLocal);
       const response = await res.data;
       if (response.success) {
         setTodoAdded(true);
-        toast.success(response.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.success(response.message, toaststyle);
       } else {
-        toast.error(response.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.error(response.message, toaststyle);
       }
     } catch (error) {
-      toast.error(error.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      toast.error(error.message, toaststyle);
     }
   };
   const handleDelete = async (id) => {
     try {
-      const res = await axios.delete(
-        `https://backendtodoservice.onrender.com/todo/deletetodo/${id}`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const res = await axios.delete(`/todo/deletetodo/${id}`, getLocal);
       const response = await res.data;
       if (response.success) {
         setTodoDeleted(true);
-        toast.success(response.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.success(response.message, toaststyle);
       } else {
-        toast.error(response.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.error(response.message, toaststyle);
       }
     } catch (error) {
-      toast.error(error.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      toast.error(error.message, toaststyle);
     }
   };
   const handleEdit = async (id) => {
@@ -147,62 +79,31 @@ const Landing = () => {
       if (newtodo === "" || newtodo === null) return;
       settodo(newtodo);
       const res = await axios.put(
-        `https://backendtodoservice.onrender.com/todo/edittodo/${id}`,
+        `/todo/edittodo/${id}`,
         {
           title: newtodo,
         },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        getLocal
       );
       const response = res.data;
       if (response.success) {
         setTodoEditted(true);
-        toast.success(response.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.success(response.message, toaststyle);
       } else {
-        toast.error(response.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.error(response.message, toaststyle);
       }
       settodo("");
     } catch (error) {
-      toast.error(error.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      toast.error(error.message, toaststyle);
     }
   };
   const addTask = async (e) => {
     try {
       e.preventDefault();
       const res = await axios.post(
-        `https://backendtodoservice.onrender.com/todo/createtask/${taskid}`,
+        `/todo/createtask/${taskid}`,
         { task: task },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        getLocal
       );
       const response = await res.data;
 
@@ -214,48 +115,16 @@ const Landing = () => {
       // settask('')
       if (response.success) {
         setTaskAdded(true);
-        toast.success(response.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.success(response.message, toaststyle);
       } else {
-        toast.error(response.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.error(response.message, toaststyle);
       }
     } catch (error) {
-      toast.error(error.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      toast.error(error.message, toaststyle);
     }
   };
-  const handleTaskClick = async (id) => {
-    const res = await axios.get(
-      `https://backendtodoservice.onrender.com/todo/gettodo/${id}`,
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      }
-    );
+  const handleTaskClick = async (id) => { 
+    const res = await axios.get(`/todo/gettodo/${id}`, getLocal);
     settasks(res.data.todo.tasks);
     setshowtask(true);
     settaskid(null);
@@ -268,59 +137,26 @@ const Landing = () => {
       const text =
         e.target.parentNode.parentNode.firstChild.firstChild.innerText;
       console.log(text);
-      const res = await axios.delete(
-        `https://backendtodoservice.onrender.com/todo/deletetask/${taskid}`,
-        {
-          data: { taskString: text },
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const res = await axios.delete(`/todo/deletetask/${taskid}`, {
+        data: { taskString: text },
+        getLocal,
+      });
       const response = await res.data;
       if (response.success) {
         setTaskDeleted(true);
-        toast.success(response.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.success(response.message, toaststyle);
       } else {
-        toast.error(response.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.error(response.message, toaststyle);
       }
     } catch (error) {
-      toast.error(error.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      toast.error(error.message, toaststyle);
     }
   };
   const sort = async (n) => {
-    const response = await axios.get(
-      "https://backendtodoservice.onrender.com/todo/sortTodo",
-      {
-        params: { order: n },
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      }
-    );
+    const response = await axios.get(`/todo/sortTodo`, {
+      params: { order: n },
+      headers: getLocal.headers,
+    });
     const todoarray = await response.data.todos;
     settodos(todoarray);
   };
@@ -335,18 +171,7 @@ const Landing = () => {
 
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+      <ContainToast />
       <header className="p-4 bg-gray-100 text-gray-800">
         <div className="container flex flex-col md:flex-row text-center space-y-2 md:space-y-0 justify-between h-16 mx-auto">
           <h3 className="font-semibold text-xl align-middle text-slate-700">
@@ -358,6 +183,7 @@ const Landing = () => {
           >
             <div className="relative">
               <input
+              autoFocus 
                 required
                 value={todo}
                 onChange={(e) => settodo(e.target.value)}
@@ -402,14 +228,12 @@ const Landing = () => {
               <col />
               <col />
               <col />
-              <col />
               <col className="w-24" />
             </colgroup>
             <thead className="bg-gray-300">
               <tr className="text-left">
                 <th className="p-3">Todos</th>
                 <th className="p-3">Created At</th>
-                <th className="p-3">Updated At</th>
                 <th className="p-3">Tasks</th>
                 <th className="p-3">Delete</th>
                 <th className="p-3">Edit</th>
@@ -425,10 +249,7 @@ const Landing = () => {
                     <p>{todo.title}</p>
                   </td>
                   <td className="p-3">
-                    <p>{new Date(todo.createdAt).toDateString()}</p>
-                  </td>
-                  <td className="p-3">
-                    <p>{new Date().toGMTString(todo.updatedAt)}</p>
+                    <p>{new Date(todo.createdAt).toLocaleString()}</p>
                   </td>
                   <td className="p-3 ">
                     <button
@@ -469,6 +290,7 @@ const Landing = () => {
             <div className="container flex justify-between h-16 mx-auto">
               <form
                 onSubmit={addTask}
+  
                 className="flex items-center md:space-x-4 mx-auto"
               >
                 <div className="relative">
@@ -479,6 +301,7 @@ const Landing = () => {
                     type="text"
                     name="Search"
                     placeholder="task..."
+                    autoFocus = {showtask}
                     className="w-48 py-2 pl-10 text-sm rounded-md sm:w-auto focus:outline-none bg-gray-100 text-gray-800 border border-gray-300 focus:bg-gray-50"
                   />
                 </div>
